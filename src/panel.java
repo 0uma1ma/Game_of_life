@@ -1,9 +1,15 @@
-import javax.swing.JPanel;
-import javax.swing.Timer;
+import javax.swing.*;
 import java.awt.*;
 import java.awt.event.*;
 import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
+
+import javafx.application.Platform;
+import javafx.embed.swing.JFXPanel;
+import javafx.scene.Scene;
+import javafx.scene.web.WebEngine;
+import javafx.scene.web.WebView;
+
 
 
 public class panel extends JPanel implements ActionListener , MouseListener, MouseMotionListener,KeyListener {
@@ -15,6 +21,7 @@ public class panel extends JPanel implements ActionListener , MouseListener, Mou
     boolean start = true;
     int delay =100;
     Timer timer;
+    private JButton openWebPageButton;
     public panel(){
         this.setSize(PWidth,PHeight);
         this.setBackground(Color.black);
@@ -25,6 +32,13 @@ public class panel extends JPanel implements ActionListener , MouseListener, Mou
         addMouseListener(this);
         addMouseMotionListener(this);
         addKeyListener(this);
+        openWebPageButton = new JButton("Open Web Page");
+        openWebPageButton.addActionListener(new ActionListener() {
+            public void actionPerformed(ActionEvent e) {
+                openWebPage();
+            }
+        });
+        this.add(openWebPageButton);
     }
     public void paintComponent(Graphics g){
         super.paintComponent(g);
@@ -184,5 +198,20 @@ public class panel extends JPanel implements ActionListener , MouseListener, Mou
 
     @Override
     public void keyReleased(KeyEvent e) {
+    }
+
+    private void openWebPage() {
+        Platform.runLater(() -> {
+            JFXPanel fxpanel = new JFXPanel();
+            JFrame webFrame = new JFrame("Web Page");
+            webFrame.add(fxpanel);
+            WebEngine engine;
+            WebView view = new WebView();
+            engine = view.getEngine();
+            fxpanel.setScene(new Scene(view));
+            engine.load("https://en.wikipedia.org/wiki/Conway%27s_Game_of_Life");
+            webFrame.setSize(800, 600);
+            webFrame.setVisible(true);
+        });
     }
 }
